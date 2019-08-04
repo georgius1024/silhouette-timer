@@ -2,6 +2,7 @@
   "name": "silhouette-timer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://uralshooter.ru/silhouette-timer/",
   "dependencies": {
     "lodash.padstart": "^4.6.1",
     "react": "^16.8.6",
