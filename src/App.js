@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Timer from './timer'
+import Timer from './utils/timer'
+import Speaker from './utils/speaker'
 import './App.scss'
 import _padStart from 'lodash.padstart'
 
@@ -9,133 +10,146 @@ class App extends Component {
 
     this.state = {
       indicator: '00:00',
-      phase: '',
+      phase: 'stop',
     }
     this.startWorkPhase = this.startWorkPhase.bind(this)
     this.startRestPhase = this.startRestPhase.bind(this)
     this.workPhaseTick = this.workPhaseTick.bind(this)
     this.restPhaseTick = this.restPhaseTick.bind(this)
     this.stopAll = this.stopAll.bind(this)
+    this.speaker = new Speaker()
   }
-  stopAll() {
+  componentDidMount() {
+    this.speaker.preload()
+  }
+  componentWillUnmount() {
+    this.reset()
+  }
+  reset() {
     if (this.timer) {
       this.timer.stop()
+      this.timer = null
     }
+  }
+  stopAll(e) {
+    this.reset()
     this.setState({
-      phase: '',
+      phase: 'stop',
       indicator: '00:00',
     })
-    console.log('stop all')
+    this.speaker.speak(['stop'])
   }
   startWorkPhase() {
-    this.stopAll()
+    this.reset()
     this.setState({
       phase: 'work',
+      indicator: '00:00',
     })
     this.timer = new Timer(this.workPhaseTick)
-    console.log('start work')
+    this.speaker.speak(['start'])
   }
   startRestPhase() {
-    this.stopAll()
+    this.reset()
     this.setState({
       phase: 'rest',
+      indicator: '00:00',
     })
     this.timer = new Timer(this.restPhaseTick)
-    console.log('start rest')
+    if (this.speaker.memesEnabled) {
+      this.speaker.speak(['rest', 'bagpipes'])
+    } else {
+      this.speaker.speak(['rest'])
+    }
   }
   setIndicator(second) {
     const minutes = Math.floor(second / 60)
     const seconds = second % 60
-    const indicator = `${_padStart(minutes, 2, '0')}:${_padStart(
-      seconds,
-      2,
-      '0'
-    )}`
+    const indicator = `${_padStart(minutes, 2, '0')}:${_padStart(seconds, 2, '0')}`
     this.setState({
       indicator,
     })
-    console.log(indicator)
   }
   workPhaseTick(second) {
     this.setIndicator(second)
-    if (second >= 5) {
-      this.startRestPhase()
+    switch (second) {
+      case 30:
+        this.speaker.speak(['passed', '30', '5s'])
+        break
+      case 60:
+        this.speaker.speak(['passed', 'odna', '1m'])
+        break
+      case 90:
+        this.speaker.speak(['remained', 'odna', '1m'])
+        break
+      case 120:
+        this.speaker.speak(['remained', '30', '5s'])
+        break
+      case 130:
+        this.speaker.speak(['remained', '20', '5s'])
+        break
+      default:
+        if (second >= 140 && second < 150) {
+          this.speaker.speak([150 - second])
+        }
+        break
+    }
+    if (second >= 150) {
+      this.reset()
+      this.speaker.speak(['stop'])
+      setTimeout(() => {
+        this.startRestPhase()
+      }, 1000)
     }
   }
   restPhaseTick(second) {
     this.setIndicator(second)
-    if (second >= 5) {
-      this.stopAll()
+    if (second === 10 && !this.speaker.memesEnabled) {
+      this.speaker.speak(['remained', '20', '5s'])
+    }
+    if (second === 20) {
+      this.speaker.speak(['remained', '10', '5s'])
+    }
+    if (second === 25) {
+      this.speaker.speak(['remained', '5', '5s'])
+    }
+    if (second >= 30) {
+      this.reset()
+      this.speaker.speak(['stop'])
+      setTimeout(() => {
+        this.startWorkPhase()
+      }, 1000)
     }
   }
   render() {
+    const phase =
+      this.state.phase === 'work' ? 'Стреляем' : this.state.phase === 'rest' ? 'Отдыхаем' : 'Стоп'
+
     return (
       <div className="App">
         <div className={'indicator ' + this.state.phase}>
-          {this.state.indicator}
+          <div className="phase">{phase}</div>
+          <div className="time">{this.state.indicator}</div>
         </div>
         <button
           onClick={this.startWorkPhase}
-          className={'work-button ' + this.state.phase}
+          className={'work-button ' + (this.state.phase === 'work' ? 'active' : '')}
         >
-          Work
+          Стреляем
         </button>
         <button
           onClick={this.startRestPhase}
-          className={'rest-button ' + this.state.phase}
+          className={'rest-button ' + (this.state.phase === 'rest' ? 'active' : '')}
         >
-          Rest
+          Отдыхаем
+        </button>
+        <button
+          onClick={this.stopAll}
+          className={'stop-button ' + (this.state.phase === '' ? 'active' : '')}
+        >
+          Стоп
         </button>
       </div>
     )
   }
 }
 export default App
-/*
-import React, { useEffect, useState } from 'react'
-import Timer from './timer'
-function App() {
-  const [second, setSecond] = useState(0)
-  const [indicator, setIndicator] = useState(0)
-  const [workPhase, setWorkPhase] = useState(undefined)
-
-  useEffect(() => {
-    const timer = new Timer(setSecond)
-    return () => timer.stop()
-  }, [workPhase])
-
-  useEffect(() => {
-    let minutes, seconds
-    if (workPhase === true) {
-      if (seconds >= 5) {
-        setWorkPhase(undefined)
-      }
-    } else if (workPhase === false) {
-      if (seconds >= 5) {
-        setWorkPhase(undefined)
-      }
-    } else {
-      minutes = Math.floor(second / 60)
-      seconds = second % 60
-      setIndicator(`${minutes}:${seconds}`)
-      console.log(`${minutes}:${seconds}`)
-    }
-  }, [second])
-
-  function startWorkPhase() {
-    setWorkPhase(true)
-  }
-  function startRestPhase() {
-    setWorkPhase(false)
-  }
-  return (
-    <div className="App">
-      <div className="indicator">{indicator}</div>
-      <button onClick={startWorkPhase}>Work</button>
-      <button onClick={startRestPhase}>Rest</button>
-    </div>
-  )
-}
-
-export default App
-*/
