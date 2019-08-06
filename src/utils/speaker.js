@@ -56,12 +56,14 @@ class Speaker {
       'pause',
       'resume',
       'rest',
-      'bagpipes',
       '1f',
       '2f',
       'ave1',
       'ave2',
       'odna',
+      'attention',
+      'fire',
+      'stop-fire',
     ]
     this.currentTrack = 0
     this.currentSequence = []
@@ -79,20 +81,20 @@ class Speaker {
     this.currentTrack = 0
     this.currentSequence = speech.map(e => {
       switch (e) {
-      case 'finish':
-        if (this.memesEnabled) {
-          return 'time-is-over'
-        } else {
-          return 'stop'
-        }
-      case 'start':
-        if (this.memesEnabled) {
-          return 'zhgi-mochi'
-        } else {
-          return 'start'
-        }
-      default:
-        return e
+        case 'finish':
+          if (this.memesEnabled) {
+            return 'time-is-over'
+          } else {
+            return 'stop'
+          }
+        case 'start':
+          if (this.memesEnabled) {
+            return 'zhgi-mochi'
+          } else {
+            return 'start'
+          }
+        default:
+          return e
       }
     })
     this.nextWord()
@@ -109,36 +111,36 @@ class Speaker {
         speech.push(String(dd * 10))
       }
       switch (mm) {
-      case 0:
-        if (units) {
-          speech.push('5' + units)
-        }
-        break
-      default:
-        speech.push(String(mm))
-        if (units) {
-          speech.push('5' + units)
-        }
-        break
-      case 1:
-        speech.push(String(mm) + 'f')
-        if (units) {
-          speech.push('1' + units)
-        }
-        break
-      case 2:
-        speech.push(String(mm) + 'f')
-        if (units) {
-          speech.push('2' + units)
-        }
-        break
-      case 3:
-      case 4:
-        speech.push(String(mm))
-        if (units) {
-          speech.push('2' + units)
-        }
-        break
+        case 0:
+          if (units) {
+            speech.push('5' + units)
+          }
+          break
+        default:
+          speech.push(String(mm))
+          if (units) {
+            speech.push('5' + units)
+          }
+          break
+        case 1:
+          speech.push(String(mm) + 'f')
+          if (units) {
+            speech.push('1' + units)
+          }
+          break
+        case 2:
+          speech.push(String(mm) + 'f')
+          if (units) {
+            speech.push('2' + units)
+          }
+          break
+        case 3:
+        case 4:
+          speech.push(String(mm))
+          if (units) {
+            speech.push('2' + units)
+          }
+          break
       }
     } else if (qty >= 10) {
       speech.push(String(qty))
@@ -147,31 +149,31 @@ class Speaker {
       }
     } else {
       switch (qty) {
-      default:
-        speech.push(String(qty))
-        if (units) {
-          speech.push('5' + units)
-        }
-        break
-      case 1:
-        speech.push(String(qty) + 'f')
-        if (units) {
-          speech.push('1' + units)
-        }
-        break
-      case 2:
-        speech.push(String(qty) + 'f')
-        if (units) {
-          speech.push('2' + units)
-        }
-        break
-      case 3:
-      case 4:
-        speech.push(String(qty))
-        if (units) {
-          speech.push('2' + units)
-        }
-        break
+        default:
+          speech.push(String(qty))
+          if (units) {
+            speech.push('5' + units)
+          }
+          break
+        case 1:
+          speech.push(String(qty) + 'f')
+          if (units) {
+            speech.push('1' + units)
+          }
+          break
+        case 2:
+          speech.push(String(qty) + 'f')
+          if (units) {
+            speech.push('2' + units)
+          }
+          break
+        case 3:
+        case 4:
+          speech.push(String(qty))
+          if (units) {
+            speech.push('2' + units)
+          }
+          break
       }
     }
     this.speak(speech)

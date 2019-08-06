@@ -45,8 +45,12 @@ class App extends Component {
       phase: 'work',
       indicator: '00:00',
     })
-    this.timer = new Timer(this.workPhaseTick)
-    this.speaker.speak(['start'])
+    this.speaker.speak(['attention'])
+    setTimeout(() => {
+      this.reset()
+      this.timer = new Timer(this.workPhaseTick)
+      this.speaker.speak(['fire'])
+    }, 3000)
   }
   startRestPhase() {
     this.reset()
@@ -54,12 +58,8 @@ class App extends Component {
       phase: 'rest',
       indicator: '00:00',
     })
+    this.speaker.speak(['stop-fire', 'rest'])
     this.timer = new Timer(this.restPhaseTick)
-    if (this.speaker.memesEnabled) {
-      this.speaker.speak(['rest', 'bagpipes'])
-    } else {
-      this.speaker.speak(['rest'])
-    }
   }
   setIndicator(second) {
     const minutes = Math.floor(second / 60)
@@ -103,7 +103,7 @@ class App extends Component {
   }
   restPhaseTick(second) {
     this.setIndicator(second)
-    if (second === 10 && !this.speaker.memesEnabled) {
+    if (second === 10) {
       this.speaker.speak(['remained', '20', '5s'])
     }
     if (second === 20) {
@@ -148,6 +148,39 @@ class App extends Component {
         >
           Стоп
         </button>
+        <hr className="divider" />
+        <ul className="rules">
+          <li>
+            На каждые 5 выстрелов отводится 2,5 минуты. После 5-и выстрелов стрелок обязан поднять
+            руку и отчетливо сообщить судье «Стрельбу закончил». Более 5-и выстрелов в отведённые
+            2,5 не засчитываются, даже при поражении мишени. За этим обязан следить как сам стрелок
+            так и линейный регистратор попаданий. Сбитые мишени при этом записываются как промахи.
+          </li>
+          <li>
+            По истечении 2,5 минут судья дает команду «Стоп Огонь!» и «Отдых». Если все стрелки
+            сделали положенные 5 выстрелов раньше 2,5 минут, судья может дать команду раньше. После
+            данной команды дается 30 секунд на отдых и перезарядку магазина. Если стрелок сообщил,
+            что «стрельбу закончил» раньше отведенного времени, он может положить оружие на стол и
+            перезарядить магазин.{' '}
+          </li>
+          <li>
+            По истечении 30 секунд после команды для отдыха подается команда “Огонь” на следующую
+            серию мишеней.
+          </li>
+          <li>
+            Во время своей смены стрелок не имеет право покидать свое место стрельбы, садиться и
+            облокачиваться на предметы или конструкции, вплоть до команды судьи «Конец смены!».
+          </li>
+          <li>
+            <a
+              href="https://www.ataman-team.ru/rules/pravila-siluetnoj-strelbyi.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Все правила
+            </a>
+          </li>
+        </ul>
       </div>
     )
   }

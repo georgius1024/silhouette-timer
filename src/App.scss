@@ -8,19 +8,21 @@ html,
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
+  color: #777;
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #ccc;
 }
 
 #root {
   display: flex;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   max-width: 600px;
   margin: auto;
+  user-select: none;
 }
 
 $work-color: #fba0a0;
@@ -74,5 +76,16 @@ $busy-color: #808080;
   }
   button.active {
     border: 1px dotted #333;
+  }
+  hr.divider {
+    border: 1px solid #333;
+    background-color: #333;
+    margin: 10px 0;
+  }
+  ul.rules {
+    list-style-position: inside;
+    li {
+      margin: 6px;
+    }
   }
 }
