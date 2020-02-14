@@ -18,6 +18,7 @@ class App extends Component {
     this.restPhaseTick = this.restPhaseTick.bind(this)
     this.stopAll = this.stopAll.bind(this)
     this.speaker = new Speaker()
+    this.interval = 0
   }
   componentDidMount() {
     this.speaker.preload()
@@ -29,6 +30,10 @@ class App extends Component {
     if (this.timer) {
       this.timer.stop()
       this.timer = null
+    }
+    if (this.interval) {
+      clearInterval(this.interval)
+      this.interval = 0
     }
   }
   stopAll(e) {
@@ -46,7 +51,7 @@ class App extends Component {
       indicator: '00:00',
     })
     this.speaker.speak(['attention'])
-    setTimeout(() => {
+    this.interval = setTimeout(() => {
       this.reset()
       this.timer = new Timer(this.workPhaseTick)
       this.speaker.speak(['fire'])
