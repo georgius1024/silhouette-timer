@@ -64,6 +64,7 @@ class Speaker {
       'attention',
       'fire',
       'stop-fire',
+      'charge',
     ]
     this.currentTrack = 0
     this.currentSequence = []

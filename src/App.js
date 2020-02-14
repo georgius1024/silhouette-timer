@@ -50,12 +50,12 @@ class App extends Component {
       phase: 'work',
       indicator: '00:00',
     })
-    this.speaker.speak(['attention'])
+    this.speaker.speak(['charge'])
     this.interval = setTimeout(() => {
       this.reset()
       this.timer = new Timer(this.workPhaseTick)
       this.speaker.speak(['fire'])
-    }, 3000)
+    }, 10000)
   }
   startRestPhase() {
     this.reset()
