@@ -63,7 +63,9 @@ class App extends Component {
       phase: 'rest',
       indicator: '00:00',
     })
-    this.speaker.speak(['rest'])
+    this.speaker.speak(['discharge'])
+    this.interval = setTimeout(() => this.speaker.speak(['rest']), 1500)
+
     this.timer = new Timer(this.restPhaseTick)
   }
   setIndicator(second) {
@@ -101,7 +103,7 @@ class App extends Component {
     if (second >= 150) {
       this.reset()
       this.speaker.speak(['stop-fire'])
-      setTimeout(() => {
+      this.interval = setTimeout(() => {
         this.startRestPhase()
       }, 1000)
     }
